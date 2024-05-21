@@ -36,22 +36,25 @@ export class HumidityGraphComponent implements OnInit {
   constructor(private mqttService: MqttService) {}
 
   ngOnInit(): void {
-    this.mqttService.getHumidityMessages().subscribe((message: string) => {
-      const data = JSON.parse(message);
-      this.updateChart(data);
+    this.mqttService.getDataSubject().subscribe((data) => {
+      if (data) {
+        this.updateChart(data);
+      }
     });
   }
 
   updateChart(data: any): void {
-    const timestamp = new Date().toLocaleTimeString();
+    // Parse the timestamp to a Date object
+    const timestamp = new Date(data.measurement_timestamp);
+
     const newEntry = {
       name: timestamp,
-      value: data.value, // Adjust this according to your data structure
+      value: data.current_humidity, // Adjust this according to your data structure
     };
 
     if (!this.multi[0]) {
       this.multi[0] = {
-        name: 'Humidity Data',
+        name: 'Humidity',
         series: [],
       };
     }

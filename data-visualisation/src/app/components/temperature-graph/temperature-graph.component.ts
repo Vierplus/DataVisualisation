@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import { MqttService } from '../../services/mqtt.service';
 import { Color, NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
 
@@ -29,39 +29,44 @@ export class TemperatureGraphComponent implements OnInit {
     name: 'custom',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
+    domain: ['#ff0000', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
   public gradient = false;
 
   constructor(private mqttService: MqttService) {}
 
   ngOnInit(): void {
-    this.mqttService.getTemperatureMessages().subscribe((message: string) => {
-      const data = JSON.parse(message);
-      this.updateChart(data);
+    this.mqttService.getDataSubject().subscribe((data) => {
+      if (data) {
+        this.updateChart(data);
+      }
     });
-
-    // Initialize this.multi and then generate example data
-    this.multi = [
-      {
-        name: 'Temperature Data',
-        series: [],
-      },
-    ];
-    // Generate example data for demonstration
-    this.generateExampleData();
   }
 
   updateChart(data: any): void {
-    const timestamp = new Date().toLocaleTimeString();
+    // Parse the timestamp to a Date object
+    const timestamp = new Date(data.measurement_timestamp);
+
+    // Convert the UTC timestamp to German local time
+    const localTimestamp = new Date(
+      timestamp.toLocaleString('en-US', { timeZone: 'Europe/Berlin' })
+    );
+
+    // Format the local timestamp to include day/month and time (HH:mm:ss)
+    const formattedTimestamp = formatDate(
+      localTimestamp,
+      'dd/MM/yyyy HH:mm:ss',
+      'de-DE'
+    );
+
     const newEntry = {
       name: timestamp,
-      value: data.value, // Adjust this according to your data structure
+      value: data.current_temp_c, // Adjust this according to your data structure
     };
 
     if (!this.multi[0]) {
       this.multi[0] = {
-        name: 'Temperature Data',
+        name: 'Temperature',
         series: [],
       };
     }
@@ -73,19 +78,5 @@ export class TemperatureGraphComponent implements OnInit {
     }
 
     this.multi = [...this.multi];
-  }
-
-  // Method to generate example temperature data
-  generateExampleData(): void {
-    // Generate random temperature values and push them to the chart data
-    for (let i = 0; i < 20; i++) {
-      const timestamp = new Date().toLocaleTimeString();
-      const randomTemperature = Math.floor(Math.random() * (40 - 20 + 1)) + 20; // Generate random temperature between 20 and 40
-      const exampleEntry = {
-        name: timestamp,
-        value: randomTemperature,
-      };
-      this.multi[0]?.series?.push(exampleEntry);
-    }
   }
 }

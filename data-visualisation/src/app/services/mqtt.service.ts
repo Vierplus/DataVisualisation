@@ -1,39 +1,44 @@
 import { Injectable } from '@angular/core';
-import mqtt from 'mqtt';
-import { Observable, Subject } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
+import mqtt, { MqttClient } from 'mqtt';
+
+interface MeasurementData {
+  measurement_no: number;
+  measurement_timestamp: string;
+  component_no: number;
+  component_color_hex: string;
+  component_color_name: string;
+  current_temp_c: number;
+  current_temp_f: number;
+  current_humidity: number;
+  current_power_consumption: number;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class MqttService {
-  private client: mqtt.MqttClient;
-  private temperatureMessages: Subject<string> = new Subject<string>();
-  private humidityMessages: Subject<string> = new Subject<string>();
+  private client: MqttClient;
+  private dataSubject: BehaviorSubject<MeasurementData | null> =
+    new BehaviorSubject<MeasurementData | null>(null);
 
   constructor() {
     this.client = mqtt.connect('ws://100.108.16.72:9001'); // Use WebSocket endpoint
 
     this.client.on('connect', () => {
       console.log('Connected to MQTT broker');
-      this.client.subscribe('temperature');
-      this.client.subscribe('humidity');
+      this.client.subscribe('fbs_vierplus');
     });
 
     this.client.on('message', (topic, message) => {
-      const msg = message.toString();
-      if (topic === 'temperature') {
-        this.temperatureMessages.next(msg);
-      } else if (topic === 'humidity') {
-        this.humidityMessages.next(msg);
+      if (topic === 'fbs_vierplus') {
+        const data: MeasurementData = JSON.parse(message.toString());
+        this.dataSubject.next(data);
       }
     });
   }
 
-  getTemperatureMessages(): Observable<string> {
-    return this.temperatureMessages.asObservable();
-  }
-
-  getHumidityMessages(): Observable<string> {
-    return this.humidityMessages.asObservable();
+  getDataSubject() {
+    return this.dataSubject.asObservable();
   }
 }
