@@ -36,6 +36,16 @@ export class MqttService {
         this.dataSubject.next(data);
       }
     });
+
+    // Handle reconnection
+    this.client.on('reconnect', () => {
+      console.log('Reconnecting to MQTT broker');
+      this.client.subscribe('fbs_vierplus');
+    });
+
+    this.client.on('error', (error) => {
+      console.error('MQTT error:', error);
+    });
   }
 
   getDataSubject() {

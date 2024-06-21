@@ -36,8 +36,13 @@ export class TemperatureGraphComponent implements OnInit {
   constructor(private mqttService: MqttService) {}
 
   ngOnInit(): void {
+    console.warn('ngOnInit');
+
+    // Subscribe to the MQTT service to receive data
     this.mqttService.getDataSubject().subscribe((data) => {
+      console.warn('test', data);
       if (data) {
+        console.warn(data);
         this.updateChart(data);
       }
     });
@@ -47,20 +52,8 @@ export class TemperatureGraphComponent implements OnInit {
     // Parse the timestamp to a Date object
     const timestamp = new Date(data.measurement_timestamp);
 
-    // Convert the UTC timestamp to German local time
-    const localTimestamp = new Date(
-      timestamp.toLocaleString('en-US', { timeZone: 'Europe/Berlin' })
-    );
-
-    // Format the local timestamp to include day/month and time (HH:mm:ss)
-    const formattedTimestamp = formatDate(
-      localTimestamp,
-      'dd/MM/yyyy HH:mm:ss',
-      'de-DE'
-    );
-
     const newEntry = {
-      name: timestamp,
+      name: data.measurement_no,
       value: data.current_temp_c, // Adjust this according to your data structure
     };
 
