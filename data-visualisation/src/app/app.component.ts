@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { TemperatureGraphComponent } from './components/temperature-graph/temperature-graph.component';
 import { HumidityGraphComponent } from './components/humidity-graph/humidity-graph.component';
 import { MatGridListModule } from '@angular/material/grid-list';
+import { StatsComponent } from './components/stats/stats.component';
 
 @Component({
   selector: 'app-root',
@@ -11,6 +12,7 @@ import { MatGridListModule } from '@angular/material/grid-list';
     CommonModule,
     TemperatureGraphComponent,
     HumidityGraphComponent,
+    StatsComponent,
     MatGridListModule,
   ],
   templateUrl: './app.component.html',

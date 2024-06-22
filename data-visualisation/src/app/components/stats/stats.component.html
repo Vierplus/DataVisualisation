@@ -1,0 +1,28 @@
+<div class="chart-container">
+  <div class="search-container">
+    <mat-form-field appearance="outline" class="form-field">
+      <mat-label>Search by Measurement No</mat-label>
+      <mat-select
+        placeholder="Select Measurement No"
+        (selectionChange)="onSelectMeasurement($event)"
+      >
+        <mat-option
+          *ngFor="let measurement of measurementNumbers"
+          [value]="measurement"
+        >
+          Measurement #{{ measurement }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <ngx-charts-number-card
+    [view]="view"
+    [scheme]="colorScheme"
+    [results]="data"
+    [cardColor]="cardColor"
+    [customColors]="customColors"
+    (select)="onSelect($event)"
+  >
+  </ngx-charts-number-card>
+</div>

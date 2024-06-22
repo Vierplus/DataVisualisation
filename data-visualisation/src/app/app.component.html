@@ -1,3 +1,14 @@
-<h2>Measurement Data</h2>
-<app-temperature-graph></app-temperature-graph>
-<app-humidity-graph></app-humidity-graph>
+<div class="head-bar">
+  <h2 class="head-title">VierPlus - Measurement Data</h2>
+</div>
+
+<mat-grid-list cols="2" rowHeight="2:1" gutterSize="20">
+  <mat-grid-tile
+    ><app-temperature-graph class="temp"></app-temperature-graph
+  ></mat-grid-tile>
+  <mat-grid-tile><app-stats class="stats"></app-stats></mat-grid-tile>
+  <mat-grid-tile
+    ><app-humidity-graph class="humidity"></app-humidity-graph
+  ></mat-grid-tile>
+  <mat-grid-tile>4</mat-grid-tile>
+</mat-grid-list>

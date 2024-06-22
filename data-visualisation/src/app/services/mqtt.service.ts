@@ -34,6 +34,7 @@ export class MqttService {
       if (topic === 'fbs_vierplus') {
         const data: MeasurementData = JSON.parse(message.toString());
         this.dataSubject.next(data);
+        this.updateLocalStorage(data);
       }
     });
 
@@ -50,5 +51,31 @@ export class MqttService {
 
   getDataSubject() {
     return this.dataSubject.asObservable();
+  }
+
+  private updateLocalStorage(data: MeasurementData) {
+    const storageKey = 'measurementData';
+    let storedData: MeasurementData[] = JSON.parse(
+      localStorage.getItem(storageKey) || '[]'
+    );
+
+    // Check if the data already exists
+    const existingIndex = storedData.findIndex(
+      (item) => item.measurement_no === data.measurement_no
+    );
+    if (existingIndex !== -1) {
+      // Data already exists, update it if needed
+      storedData[existingIndex] = data;
+    } else {
+      // Data doesn't exist, add it
+      storedData.push(data);
+    }
+
+    localStorage.setItem(storageKey, JSON.stringify(storedData));
+  }
+
+  getStoredData(): MeasurementData[] {
+    const storageKey = 'measurementData';
+    return JSON.parse(localStorage.getItem(storageKey) || '[]');
   }
 }
