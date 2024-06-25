@@ -10,6 +10,7 @@ interface MeasurementData {
   current_temp_c: number;
   current_humidity: number;
   current_power_consumption: number;
+  current_price: number;
 }
 
 @Injectable({
@@ -25,11 +26,12 @@ export class MqttService {
 
     this.client.on('connect', () => {
       console.log('Connected to MQTT broker');
-      this.client.subscribe('fbs_vierplus');
+      this.client.subscribe('fbs_vierplus_db');
     });
 
     this.client.on('message', (topic, message) => {
-      if (topic === 'fbs_vierplus') {
+      console.warn(topic, message);
+      if (topic === 'fbs_vierplus_db') {
         const data: MeasurementData = JSON.parse(message.toString());
         this.dataSubject.next(data);
         this.updateLocalStorage(data);
@@ -39,7 +41,7 @@ export class MqttService {
     // Handle reconnection
     this.client.on('reconnect', () => {
       console.log('Reconnecting to MQTT broker');
-      this.client.subscribe('fbs_vierplus');
+      this.client.subscribe('fbs_vierplus_db');
     });
 
     this.client.on('error', (error) => {

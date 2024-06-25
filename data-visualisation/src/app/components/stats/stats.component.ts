@@ -42,7 +42,7 @@ export class StatsComponent implements OnInit {
       value: '#00ff00', // Green
     },
     {
-      name: 'Power Consumption (kW)',
+      name: 'Power Costs (kW/h)',
       value: '#ffff00', // Yellow
     },
     {
@@ -58,6 +58,7 @@ export class StatsComponent implements OnInit {
     this.mqttService.getDataSubject().subscribe((data) => {
       if (data) {
         this.updateData(data);
+        this.loadMeasurementData(data);
       }
     });
   }
@@ -72,6 +73,13 @@ export class StatsComponent implements OnInit {
     }
   }
 
+  loadMeasurementData(data: any) {
+    const componentNo = data.component_no;
+    if (!this.measurementNumbers.includes(componentNo)) {
+      this.measurementNumbers.push(componentNo);
+    }
+  }
+
   updateData(data: any) {
     this.data = this.transformData(data);
   }
@@ -79,7 +87,7 @@ export class StatsComponent implements OnInit {
   transformData(data: any): any[] {
     this.customColors.forEach((cc) => {
       if (cc.name === 'Dice Color') {
-        cc.value = data.component_color_name;
+        cc.value = data.component_color_hex;
       }
     });
 
@@ -93,8 +101,8 @@ export class StatsComponent implements OnInit {
         value: data.current_humidity,
       },
       {
-        name: 'Power Used (kW)',
-        value: data.current_power_consumption,
+        name: 'Power Costs (kW/h)',
+        value: data.current_price,
       },
       {
         name: 'Dice Color',
