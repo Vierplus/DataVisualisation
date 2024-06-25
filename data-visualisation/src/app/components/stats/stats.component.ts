@@ -66,7 +66,7 @@ export class StatsComponent implements OnInit {
     const storedData = this.mqttService.getStoredData();
     if (storedData.length > 0) {
       this.measurementNumbers = Array.from(
-        new Set(storedData.map((item) => item.measurement_no))
+        new Set(storedData.map((item) => item.component_no))
       );
       this.data = this.transformData(storedData[0]);
     }
@@ -104,10 +104,10 @@ export class StatsComponent implements OnInit {
   }
 
   onSelectMeasurement(event: any) {
-    const measurementNo = event.value;
+    const componentNo = event.value;
     const storedData = this.mqttService.getStoredData();
     const filteredData = storedData.find(
-      (item) => item.measurement_no == measurementNo
+      (item) => item.component_no == componentNo
     );
     if (filteredData) {
       this.updateData(filteredData);

@@ -3,13 +3,11 @@ import { BehaviorSubject } from 'rxjs';
 import mqtt, { MqttClient } from 'mqtt';
 
 interface MeasurementData {
-  measurement_no: number;
   measurement_timestamp: string;
   component_no: number;
   component_color_hex: string;
   component_color_name: string;
   current_temp_c: number;
-  current_temp_f: number;
   current_humidity: number;
   current_power_consumption: number;
 }
@@ -61,7 +59,7 @@ export class MqttService {
 
     // Check if the data already exists
     const existingIndex = storedData.findIndex(
-      (item) => item.measurement_no === data.measurement_no
+      (item) => item.component_no === data.component_no
     );
     if (existingIndex !== -1) {
       // Data already exists, update it if needed
