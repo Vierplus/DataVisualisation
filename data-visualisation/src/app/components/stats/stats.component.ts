@@ -43,7 +43,7 @@ export class StatsComponent implements OnInit {
     },
     {
       name: 'Power Costs (kW/h)',
-      value: '#ffff00', // Yellow
+      value: '#ffcb00', // Orange
     },
     {
       name: 'Dice Color',
