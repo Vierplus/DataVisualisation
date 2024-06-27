@@ -11,6 +11,18 @@
   margin: 0 auto;
 }
 
+.search-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+}
+
+.measurement-date {
+  font-weight: bold;
+  font-size: 18px;
+}
+
 .form-field {
   margin-bottom: 20px;
   padding: 10px;
@@ -18,7 +30,8 @@
   font-size: 16px;
 }
 
-ngx-charts-number-card {
+.cards-wrapper {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
 }

@@ -58,10 +58,11 @@ export class HumidityGraphComponent implements OnInit {
     });
   }
 
+  /**
+   * updates the chart with the given data
+   * @param data
+   */
   updateChart(data: any): void {
-    // Parse the timestamp to a Date object
-    const timestamp = new Date(data.measurement_timestamp);
-
     const newEntry = {
       name: data.component_no,
       value: data.current_humidity,
@@ -85,6 +86,10 @@ export class HumidityGraphComponent implements OnInit {
     this.multi = [...this.multi];
   }
 
+  /**
+   * updates the chart with the stored data
+   * @param storedData
+   */
   updateChartFromLocalStorage(storedData: any[]): void {
     // Clear existing data
     this.multi[0].series = [];
@@ -95,6 +100,10 @@ export class HumidityGraphComponent implements OnInit {
     });
   }
 
+  /**
+   * loads the data from the local storage
+   * @returns storedData
+   */
   loadLocalStorage(): any[] {
     const storedData = JSON.parse(
       localStorage.getItem('measurementData') || '[]'

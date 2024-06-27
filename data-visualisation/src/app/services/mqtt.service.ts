@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import mqtt, { MqttClient } from 'mqtt';
 
+// Interface with all the data definition from the mongodb
 interface MeasurementData {
   measurement_timestamp: string;
   component_no: number;
@@ -17,6 +18,10 @@ interface MeasurementData {
   providedIn: 'root',
 })
 export class MqttService {
+  /**
+   * Topic from the mosquitto broker
+   */
+  topic = 'fbs_vierplus_4p';
   private client: MqttClient;
   private dataSubject: BehaviorSubject<MeasurementData | null> =
     new BehaviorSubject<MeasurementData | null>(null);
@@ -26,12 +31,17 @@ export class MqttService {
 
     this.client.on('connect', () => {
       console.log('Connected to MQTT broker');
-      this.client.subscribe('fbs_vierplus_db');
+      this.client.subscribe(this.topic, (err) => {
+        if (err) {
+          console.error('Subscription error:', err);
+        } else {
+          console.log('Subscribed to topic ' + this.topic);
+        }
+      });
     });
 
     this.client.on('message', (topic, message) => {
-      console.warn(topic, message);
-      if (topic === 'fbs_vierplus_db') {
+      if (topic === this.topic) {
         const data: MeasurementData = JSON.parse(message.toString());
         this.dataSubject.next(data);
         this.updateLocalStorage(data);
@@ -41,7 +51,7 @@ export class MqttService {
     // Handle reconnection
     this.client.on('reconnect', () => {
       console.log('Reconnecting to MQTT broker');
-      this.client.subscribe('fbs_vierplus_db');
+      this.client.subscribe('fbs_vierplus_4p');
     });
 
     this.client.on('error', (error) => {
@@ -49,10 +59,19 @@ export class MqttService {
     });
   }
 
+  /**
+   * subcribe to get the data
+   * @returns data as object
+   */
   getDataSubject() {
     return this.dataSubject.asObservable();
   }
 
+  /**
+   * updates the local storage with the data,
+   * so its stored localy and can get used after reload of page
+   * @param data
+   */
   private updateLocalStorage(data: MeasurementData) {
     const storageKey = 'measurementData';
     let storedData: MeasurementData[] = JSON.parse(
@@ -74,6 +93,10 @@ export class MqttService {
     localStorage.setItem(storageKey, JSON.stringify(storedData));
   }
 
+  /**
+   * gets the data from the local storage
+   * @returns data as object
+   */
   getStoredData(): MeasurementData[] {
     const storageKey = 'measurementData';
     return JSON.parse(localStorage.getItem(storageKey) || '[]');

@@ -58,6 +58,10 @@ export class TemperatureGraphComponent implements OnInit {
     });
   }
 
+  /**
+   * updates the chart with the data send from the websocket
+   * @param data
+   */
   updateChart(data: any): void {
     // Parse the timestamp to a Date object
     const timestamp = new Date(data.measurement_timestamp);
@@ -85,6 +89,10 @@ export class TemperatureGraphComponent implements OnInit {
     this.multi = [...this.multi];
   }
 
+  /**
+   * updates the chart with the data from the local storage
+   * @param storedData
+   */
   updateChartFromLocalStorage(storedData: any[]): void {
     // Clear existing data
     this.multi[0].series = [];
@@ -95,6 +103,10 @@ export class TemperatureGraphComponent implements OnInit {
     });
   }
 
+  /**
+   * loads the data from the local storage
+   * @returns storedData
+   */
   loadLocalStorage(): any[] {
     const storedData = JSON.parse(
       localStorage.getItem('measurementData') || '[]'

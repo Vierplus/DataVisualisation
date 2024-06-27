@@ -14,15 +14,18 @@
         </mat-option>
       </mat-select>
     </mat-form-field>
+    <span class="measurement-date"> {{ measurementDate }}</span>
   </div>
-
-  <ngx-charts-number-card
-    [view]="view"
-    [scheme]="colorScheme"
-    [results]="data"
-    [cardColor]="cardColor"
-    [customColors]="customColors"
-    (select)="onSelect($event)"
-  >
-  </ngx-charts-number-card>
+  <div class="cards-wrapper">
+    <ngx-charts-number-card
+      *ngFor="let card of data"
+      [view]="view"
+      [scheme]="colorScheme"
+      [results]="[card]"
+      [cardColor]="cardColor"
+      [customColors]="customColors"
+      (select)="onSelect($event)"
+    >
+    </ngx-charts-number-card>
+  </div>
 </div>
